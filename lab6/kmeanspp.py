@@ -3,7 +3,7 @@ from collections import defaultdict
 from copy import deepcopy
 
 
-class KMeans(object):
+class KMeansPP(object):
     def __init__(self, df, k):
         """
         Given a pandas dataframe and the of clusters,
@@ -22,6 +22,8 @@ class KMeans(object):
 
         self.k = np.min(k, df.shape[0])
         self.points = df.as_matrix()
+        # Choose initial center uniformly at random from the points.
+        c1_index = np.random.randint(low=0, high=self.points.ndim)
         self.centers = df.sample(self._k).as_matrix()
         self.clusters = defaultdict(list)
 
@@ -46,7 +48,7 @@ class KMeans(object):
             clusters[center_idx].append(p)
         self.clusters = clusters
 
-    def update_centroids(self):
+    def _update_centroids(self):
         """ Update centroids for a single iteration of k-means."""
         self._assign()
         new_centers = np.zeros(self.centers.shape)
@@ -57,7 +59,7 @@ class KMeans(object):
             # Take the average of all points (aka along the rows, axis=0)
             # associated with the current centroid, and
             # use that as the new centroid.
-            avg = np.sum(cluster_pts, axis=0) / cluster_pts.shape[0]
+            avg = np.sum(cluster_pts, axis=0) / cluster_pts.ndim
             new_centers[center_idx] = avg
         self.centers = new_centers
 
