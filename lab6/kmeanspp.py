@@ -59,7 +59,7 @@ class KMeansPP(object):
             # Take the average of all points (aka along the rows, axis=0)
             # associated with the current centroid, and
             # use that as the new centroid.
-            avg = np.sum(cluster_pts, axis=0) / cluster_pts.ndim
+            avg = np.sum(cluster_pts, axis=0) / cluster_pts.shape[0]
             new_centers[center_idx] = avg
         self.centers = new_centers
 
