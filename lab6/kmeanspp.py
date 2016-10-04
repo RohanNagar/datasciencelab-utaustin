@@ -22,9 +22,35 @@ class KMeansPP(object):
 
         self.k = np.min(k, df.shape[0])
         self.points = df.as_matrix()
+
+        # If the number of points is less than the number
+        # of clusters, then set k=number of points
+        num_clusters = min(self.k, self.points.shape[0])
+        self.centers = np.zeros(num_clusters, self.points.shape[1])
+
         # Choose initial center uniformly at random from the points.
-        c1_index = np.random.randint(low=0, high=self.points.ndim)
-        self.centers = df.sample(self._k).as_matrix()
+        c1_index = np.random.randint(low=0, high=self.points.shape[0])
+        self.centers[0] = self.points[c1_index]
+
+        for i in range(1, num_clusters):
+            # For each iteration, Compute the vector containing the square
+            # distances between all points in the dataset
+
+            dist_vec = np.array([np.amin((c - self.points) ** 2, axis=0)
+                                 for c in self.cetners])
+            # choose each subsequent center from self.pixels,
+            # randomly drawn from the normalized probability distribution
+            # over dist_vec.
+            probs = dist_vec / dist_vec.sum()
+            cumprobs = probs.cumsum()
+            r = np.random.rand()
+
+            for j, p in enumerate(cumprobs):
+                if r < p:
+                    ci_index = j  # Index of every subsequent centroid
+                    break
+            self.centers[i] = ci_index
+
         self.clusters = defaultdict(list)
 
     def _find_center(self, p):
