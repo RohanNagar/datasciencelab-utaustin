@@ -20,13 +20,10 @@ class KMeansPP(object):
         # Also read this link (a bit confusing, but helpful too):
         # https://datasciencelab.wordpress.com/2014/01/15/improved-seeding-for-clustering-with-k-means/
 
-        self.k = np.min(k, df.shape[0])
-        self.points = df.as_matrix()
-
         # If the number of points is less than the number
         # of clusters, then set k=number of points
-        num_clusters = min(self.k, self.points.shape[0])
-        # self.centers = np.zeros(num_clusters, self.points.shape[1])
+        self.k = np.min(k, df.shape[0])
+        self.points = df.as_matrix()
         self.centers = []
 
         # Choose initial center uniformly at random from the points.
@@ -34,7 +31,7 @@ class KMeansPP(object):
         # self.centers[0] = self.points[c1_index]
         self.centers.append(self.points[c1_index])
 
-        for i in range(1, num_clusters):
+        for i in range(1, k):
             # For each iteration, Compute the vector containing the square
             # distances between all points in the dataset
 
