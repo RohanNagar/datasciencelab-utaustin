@@ -1,5 +1,6 @@
 import numpy as np
 from collections import defaultdict
+from copy import deepcopy
 
 
 class KMeans(object):
