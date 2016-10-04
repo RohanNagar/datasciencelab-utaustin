@@ -8,7 +8,7 @@ class KMeansPP(object):
         """
         Given a pandas dataframe and the of clusters,
         Initializes k-means to its initial K centroids
-        via uniform random sampling (without replacement).
+        via k-means++ init
 
         Params:
             df - pandas dataframe containing points to be clustered
@@ -26,18 +26,20 @@ class KMeansPP(object):
         # If the number of points is less than the number
         # of clusters, then set k=number of points
         num_clusters = min(self.k, self.points.shape[0])
-        self.centers = np.zeros(num_clusters, self.points.shape[1])
+        # self.centers = np.zeros(num_clusters, self.points.shape[1])
+        self.centers = []
 
         # Choose initial center uniformly at random from the points.
         c1_index = np.random.randint(low=0, high=self.points.shape[0])
-        self.centers[0] = self.points[c1_index]
+        # self.centers[0] = self.points[c1_index]
+        self.centers.append(self.points[c1_index])
 
         for i in range(1, num_clusters):
             # For each iteration, Compute the vector containing the square
             # distances between all points in the dataset
 
             dist_vec = np.array([np.amin((c - self.points) ** 2, axis=0)
-                                 for c in self.cetners])
+                                 for c in self.centers])
             # choose each subsequent center from self.pixels,
             # randomly drawn from the normalized probability distribution
             # over dist_vec.
@@ -49,7 +51,7 @@ class KMeansPP(object):
                 if r < p:
                     ci_index = j  # Index of every subsequent centroid
                     break
-            self.centers[i] = ci_index
+            self.centers.append(self.points[ci_index])
 
         self.clusters = defaultdict(list)
 
