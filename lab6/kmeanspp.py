@@ -22,7 +22,7 @@ class KMeansPP(object):
 
         # If the number of points is less than the number
         # of clusters, then set k=number of points
-        self.k = np.min(k, df.shape[0])
+        self.k = min(k, df.shape[0])
         self.points = df.as_matrix()
         self.centers = []
 
@@ -35,9 +35,10 @@ class KMeansPP(object):
             # For each iteration, Compute the vector containing the square
             # distances between all points in the dataset
 
-            dist_vec = np.array([np.amin((c - self.points) ** 2, axis=0)
-                                 for c in self.centers])
-            # choose each subsequent center from self.pixels,
+            dist_vec = np.array([min([(c - x) @ (c - x)
+                                      for c in self.centers])
+                                 for x in self.points])
+            # choose each subsequent center from self.points,
             # randomly drawn from the normalized probability distribution
             # over dist_vec.
             probs = dist_vec / dist_vec.sum()
@@ -50,6 +51,7 @@ class KMeansPP(object):
                     break
             self.centers.append(self.points[ci_index])
 
+        self.centers = np.array(self.centers)
         self.clusters = defaultdict(list)
 
     def _find_center(self, p):
@@ -78,7 +80,7 @@ class KMeansPP(object):
         self._assign()
         new_centers = np.zeros(self.centers.shape)
         # Recompute new centroids
-        for center_idx, cluster in sorted(self.clusters).items():
+        for center_idx, cluster in sorted(self.clusters.items()):
             # transform list of points in cluster -> ndarray of points
             cluster_pts = np.array(cluster)
             # Take the average of all points (aka along the rows, axis=0)
@@ -95,8 +97,8 @@ class KMeansPP(object):
         """
         for i in range(num_iters):
             old_centroids = deepcopy(self.centers)
-            self.update_centroids()
+            self._update_centroids()
             if i != 0:
-                if self.centers == old_centroids:
+                if np.array_equal(self.centers, old_centroids):
                     break
         return zip(self.centers, list(self.clusters.values()))
