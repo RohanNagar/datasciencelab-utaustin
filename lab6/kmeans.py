@@ -20,7 +20,7 @@ class KMeans(object):
         # Also read this link (a bit confusing, but helpful too):
         # https://datasciencelab.wordpress.com/2014/01/15/improved-seeding-for-clustering-with-k-means/
 
-        self.k = np.min(k, df.shape[0])
+        self.k = min(k, df.shape[0])
         self.points = df.as_matrix()
         self.centers = df.sample(self._k).as_matrix()
         self.clusters = defaultdict(list)
