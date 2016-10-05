@@ -39,15 +39,14 @@ class SpectralCluster(object):
         A = np.zeros((n, n))
         for i in range(n):
             A[i, :] = LA.norm(points[i] - points, axis=1) ** 2
-            print(i)
         A = np.exp(-A / (2 * np.power(sigma, 2)))
         np.fill_diagonal(A, 0)
 
         # Find the Laplacian matrix L, which is equal to D^(-1/2)AD^(-1/2),
         # where D is defined as a diagonal matrix with diagonal entries equal
         # to the sums of the rows of A.
-        D = np.diag(A.sum(axis=1))
-        D_sqrt_recip = np.reciprocal(np.power(D, .5))  # D^(-1/2)
+        D_sqrt_recip = np.diag(np.reciprocal(
+            np.power(A.sum(axis=1), .5)))  # D^(-1/2)
         L = D_sqrt_recip @ A @ D_sqrt_recip
         w, v = LA.eig(L)  # Eigenvalues and eigenvectors of L
         eig_pairs = list(zip(w, v))
@@ -65,7 +64,7 @@ class SpectralCluster(object):
 
         # Form the matrix Y from X by renormalizing each of X's rows to have
         # unit length.
-        Y = X / np.sqrt((X ** 2).sum(axis=1))
+        Y = X / np.sqrt((X ** 2).sum(axis=1)).reshape(-1, 1)
         self.points = Y
         self.centers = pd.DataFrame(Y).sample(self._k).as_matrix()
 
