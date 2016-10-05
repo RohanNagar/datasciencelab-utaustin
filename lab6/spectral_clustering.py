@@ -36,7 +36,10 @@ class SpectralCluster(object):
         # Form the affinity matrix A
         n = self.orig_points.shape[0]  # Number of points.
         points = self.orig_points
-        A = points.reshape(1, -1).T ** 2 - np.tile(points, (n, 1)) ** 2
+        A = np.zeros((n, n))
+        for i in range(n):
+            A[i, :] = LA.norm(points[i] - points, axis=1) ** 2
+            print(i)
         A = np.exp(-A / (2 * np.power(sigma, 2)))
         np.fill_diagonal(A, 0)
 
@@ -76,7 +79,7 @@ class SpectralCluster(object):
         Returns:
             Index of the center closest to current pixel
         """
-        center_dists = np.linalg.norm(self.points[p] - self.centers, axis=1)
+        center_dists = LA.norm(self.points[p] - self.centers, axis=1)
         return np.argmin(center_dists)
 
     def _assign(self):
